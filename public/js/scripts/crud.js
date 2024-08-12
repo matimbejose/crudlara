@@ -1,4 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    function sendRequest(method, url, data = null, callback = null) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
+
+        // Configura o cabeçalho da requisição com o token CSRF
+        xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        console.log('Raw response:', xhr.responseText); // Log da resposta
+                        const response = JSON.parse(xhr.responseText);
+                        if (callback) {
+                            callback(response);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                    }
+                } else {
+                    console.error('Error:', xhr.status, xhr.responseText);
+                }
+            }
+        };
+
+        // Envia a requisição com os dados (se houver)
+        if (data) {
+            xhr.send(JSON.stringify(data));
+        } else {
+            xhr.send();
+        }
+    }
 
     function resetarFormulario() {
         document.getElementById('crud_id').value = '';
@@ -44,18 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById(elementId).style.display = show ? 'block' : 'none';
     }
 
-    function sendAjaxRequest(method, url, data, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open(method, url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json'); // Definindo como JSON
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
-        };
-        xhr.send(JSON.stringify(data)); // Enviando dados como JSON
-    }
-
     function handleCheckboxClick(event) {
         var crud_id = event.target.getAttribute('data-resultado-id');
 
@@ -68,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Se o checkbox foi marcado, preenche o formulário, senão, reseta o formulário
         if (event.target.checked) {
-            sendAjaxRequest('GET', `/crud/${crud_id}`, null, function (response) {
+            sendRequest('GET', `/crud/${crud_id}`, null, function (response) {
                 preencherFormulario(response);
             });
         } else {
@@ -103,16 +128,24 @@ document.addEventListener('DOMContentLoaded', function () {
         var method = crud_id ? 'PUT' : 'POST';
         var url = crud_id ? `/crud/${crud_id}` : '/crud';
 
-        sendAjaxRequest(method, url, formData, function (response) {
-            location.reload(); // Recarrega a página após a submissão
+        sendRequest(method, url, formData, function (response) {
+            if (response.id || response.message) {
+                location.reload(); // Recarrega a página após a submissão
+            } else {
+                console.error('Erro ao processar a solicitação:', response);
+            }
         });
     }
 
     function handleDelete(event) {
         var crud_id = document.getElementById('crud_id').value;
         if (crud_id && confirm('Tem certeza que deseja excluir este registro?')) {
-            sendAjaxRequest('DELETE', `/crud/${crud_id}`, null, function (response) {
-                location.reload(); // Recarrega a página após a exclusão
+            sendRequest('DELETE', `/crud/${crud_id}`, null, function (response) {
+                if (response.message) {
+                    location.reload(); // Recarrega a página após a exclusão
+                } else {
+                    console.error('Erro ao excluir o registro:', response);
+                }
             });
         }
     }
@@ -139,5 +172,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('btn-delete').addEventListener('click', handleDelete);
-
 });

@@ -10,7 +10,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="vendor/global/global.min.js"></script>
-	<script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+	<!-- <script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script> -->
     <script src="vendor/select2/js/select2.full.min.js"></script>
     <script src="js/plugins-init/select2-init.js"></script>
     <script src="vendor/apexchart/apexchart.js"></script>

@@ -16,8 +16,7 @@ class CrudController extends Controller
 
         // Verifica se a consulta está retornando dados
         if ($cruds->isEmpty()) {
-            // Adicione uma mensagem de debug
-            \Log::info('Nenhum registro encontrado para como_soube_empresa = Amigos');
+            return response()->json(['message' => 'Nenhum registro encontrado para como_soube_empresa = Amigos'], 404);
         }
 
         return view('crud.index', compact('cruds'));
@@ -28,7 +27,7 @@ class CrudController extends Controller
      */
     public function create()
     {
-        return view('crud.create');
+        // Não utilizado para API
     }
 
     /**
@@ -45,9 +44,9 @@ class CrudController extends Controller
             'como_soube_empresa' => 'nullable|string|max:255',
         ]);
 
-        Crud::create($validatedData);
+        $crud = Crud::create($validatedData);
 
-        return redirect()->route('crud.index')->with('success', 'CRUD criado com sucesso!');
+        return response()->json($crud, 201);
     }
 
     /**
@@ -65,23 +64,7 @@ class CrudController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function edit($id)
-    {
-        $crud = Crud::find($id);
-
-        if (!$crud) {
-            return redirect()->route('crud.index')->with('msg', 'Registro não encontrado')->with('msg_type', 'error');
-        }
-
-        return view('crud.edit', compact('crud'));
-    }
-
-
-
-    /**
-     * Display the specified resource.
+     * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
@@ -97,17 +80,17 @@ class CrudController extends Controller
         $crud = Crud::findOrFail($id);
         $crud->update($validatedData);
 
-        return redirect()->route('crud.index')->with('success', 'CRUD atualizado com sucesso!');
+        return response()->json($crud);
     }
 
     /**
-     * Display the specified resource.
+     * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
         $crud = Crud::findOrFail($id);
         $crud->delete();
 
-        return redirect()->route('crud.index')->with('success', 'Registro apagado com sucesso!');
+        return response()->json(['message' => 'Registro apagado com sucesso!']);
     }
 }

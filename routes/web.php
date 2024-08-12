@@ -18,7 +18,6 @@ use App\Http\Controllers\CrudController;
 
 
 Route::get('/', [CrudController::class, 'index']);
-// Route::post('crud/store', [CrudController::class, 'store']);
 Route::resource('crud', CrudController::class);
 
 // Route::get('/', function () {

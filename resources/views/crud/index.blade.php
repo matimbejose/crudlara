@@ -77,12 +77,12 @@
                         <!-- Formulário de cadastro/edição -->
                         <!-- Verifica se existe um $crud para edição -->
                         @if(isset($crud))
-                        <form action="{{ url('crud/' . $crud->id) }}" method="post">
+                        <form action="{{ url('crud/' . $crud->id) }}" method="_method">
                             @csrf
                             @method('PUT') <!-- Inclui um campo de método para PUT -->
                             <input type="hidden" name="crud_id" id="crud_id" value="{{ $crud->id }}">
-                            @else
-                            <form action="{{ url('crud/store') }}" method="post">
+                            @elsea
+                            <form action="{{ url('crud') }}" method="_method">
                                 @csrf
                                 <input type="hidden" name="crud_id" id="crud_id">
                                 @endif
