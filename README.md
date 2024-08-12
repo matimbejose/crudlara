@@ -13,12 +13,12 @@ Este Ã© um projeto de exemplo para um sistema CRUD (Create, Read, Update, Dele
 
 Siga os passos abaixo para configurar o projeto em seu ambiente local.
 
-### 1. Clone o repositÃ³rio
+### 1. Clone o rep
 
 ```sh
 git clone https://github.com/matimbejose/crudphp
 ```
-### 2. Acesse o diretÃ³rio do projeto
+### 2. Acesse a pasta do projeto
 ```sh
 cd crud
 ```
